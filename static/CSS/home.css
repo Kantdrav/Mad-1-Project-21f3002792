@@ -1,0 +1,20 @@
+#Signup_form{
+    background-color: beige;
+    width: fit-content;
+    padding : 20px;
+    border-radius: 0px;
+    position: relative;
+    left : 50%;
+    transform: translate(-50%,0px);
+    box-shadow:
+}
+#Signup_form h1{
+    text-align: center;
+    font-family: 'Segoe';
+}
+#Signup_form input{
+    margin:2px;
+    padding:3px;
+    border-style:None;
+    border-radius: 20px;
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Welcome, {{ username.username }}</h1>
+
+        <!-- Subjects Display -->
+        
+        <ul>
+            {% for subject in subjects %}
+            <li>{{ subject.name }}</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Quizzes Display -->
+        <h2>Available Quizzes</h2>
+        {% if quizzes %}
+            {% for quiz in quizzes %}
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Quiz: {{ quiz.name }}</h3>
+                    {% if quiz_scores[quiz.id].total > 0 %}
+                    <div class="badge {% if quiz_scores[quiz.id].percentage >= 70 %}bg-success{% elif quiz_scores[quiz.id].percentage >= 40 %}bg-warning{% else %}bg-danger{% endif %}">
+                        Score: {{ quiz_scores[quiz.id].correct }}/{{ quiz_scores[quiz.id].total }} ({{ quiz_scores[quiz.id].percentage }}%)
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if quiz_questions[quiz.id] %}
+                        <h4>Questions:</h4>
+                        <div class="list-group">
+                            {% for question in quiz_questions[quiz.id] %}
+                            <div class="list-group-item">
+                                <h5 class="mb-2">Question {{ loop.index }}:</h5>
+                                <p class="mb-2">{{ question.question_statement }}</p>
+                                
+                                {% if not question.user_answer %}
+                                <form action="{{ url_for('submit_answer', question_id=question.id) }}" method="POST" class="ms-3">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="answer" id="option1_{{ question.id }}" value="option1" required>
+                                        <label class="form-check-label" for="option1_{{ question.id }}">
+                                            {{ question.option1 }}
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="answer" id="option2_{{ question.id }}" value="option2">
+                                        <label class="form-check-label" for="option2_{{ question.id }}">
+                                            {{ question.option2 }}
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="answer" id="option3_{{ question.id }}" value="option3">
+                                        <label class="form-check-label" for="option3_{{ question.id }}">
+                                            {{ question.option3 }}
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="answer" id="option4_{{ question.id }}" value="option4">
+                                        <label class="form-check-label" for="option4_{{ question.id }}">
+                                            {{ question.option4 }}
+                                        </label>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary mt-2">Submit Answer</button>
+                                </form>
+                                {% else %}
+                                <div class="ms-3">
+                                    <div class="alert {% if question.user_answer == question.correct_option %}alert-success{% else %}alert-danger{% endif %}">
+                                        <p class="mb-1">Your answer: {{ question.user_answer }}</p>
+                                        <p class="mb-0">Correct answer: {{ question.correct_option }}</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No questions available for this quiz yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No quizzes available yet.</p>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
